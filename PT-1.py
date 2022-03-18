@@ -26,8 +26,9 @@ def t_CAMPO(t):
 
 def t_special_CAMPO(t):
 	r"::\w+"
+	modes = {'sum' : r'\d','media' : r'\d'}
 	aux = t.value[2:]
-	t.lexer.atual = ((t.lexer.atual[0][0] + "_" + aux,aux),t.lexer.atual[1],t.lexer.atual[2])
+	t.lexer.atual = ((t.lexer.atual[0][0] + "_" + aux,aux),t.lexer.atual[1],modes[aux])#TODO proteger caso n exista no dic de modos 
 
 def t_BEGINSPECIAL(t):
 	r"{.*}"
@@ -55,6 +56,27 @@ def t_error(t):
 	print(t)
 	t.lexer.skip(1)
 
+def proc_agre(array,mode):
+	array = array.split(",")
+	array = [i for i in array if i != '']
+
+	if mode == 'normal':
+		ret = '['+','.join(array)+']'
+	elif mode == 'sum':
+		ret = 0
+		for i in array:
+			ret += int(i)
+	elif mode == 'media':
+		ret = 0
+		for i in array:
+			ret += int(i)
+		ret = ret / array.lenght()
+	else:
+		print('Modo Desconhecido')
+		ret = None
+	return ret
+
+
 fd = open("test","r")
 
 lexer = lex.lex()
@@ -72,14 +94,17 @@ print(lexer.reg)
 
 reg = re.compile(lexer.reg)
 
+line_count = 0
+
 for line in fd:
+	line_count+=1
 	proc = reg.match(line)
+	dic = proc.groupdict()
 	if proc:
 		#processa e passa json 
-		print(proc.groupdict())
+		for group,mode in lexer.pros_proc:
+			dic[group] = proc_agre(dic[group],mode)
+		print(dic)
+			
 	else:
-		#linha deu erro 
-		pass
-
-for proc in lexer.pros_proc:
-	print(proc)
+		print('Error in line: {}'.format(line_count))
