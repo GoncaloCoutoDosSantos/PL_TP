@@ -110,7 +110,10 @@ def proc_agre(array,mode):
 	array = [i for i in array if i != '']
 
 	if mode == 'normal':
-		ret = '['+','.join(array)+']'
+		ret = []
+		for i in array:
+			i = int(i)
+			ret.append(int(i))
 	elif mode == 'sum':
 		ret = 0
 		for i in array:
@@ -131,6 +134,8 @@ def proc_agre(array,mode):
 
 fd = open("test","r")
 
+write_file = open("result.json", "w")
+
 lexer = lex.lex()
 lexer.reg = r"^"
 lexer.atual = ""
@@ -149,12 +154,13 @@ if(lexer.reg != "" and lexer.count == 0 and not(lexer.atual in lexer.ids)):
 	else: lexer.reg = lexer.reg[:-1]
 
 	lexer.reg += r"$"
-
 	print(lexer.reg)
 
 	reg = re.compile(lexer.reg)
 
 	line_count = 0
+
+	write_file.write("[\n")
 
 	for line in fd:
 		line_count+=1
@@ -164,10 +170,37 @@ if(lexer.reg != "" and lexer.count == 0 and not(lexer.atual in lexer.ids)):
 			#processa e passa json 
 			for group,mode in lexer.pros_proc:
 				dic[group] = proc_agre(dic[group],mode)
-			print(dic)
+			#print(dic)
+
+			write_file.write("    {\n")
+
+			for gr in dic:
+
+				write_file.write("        \"" + gr + "\" : ")#a unica coisa q falta é tratar das vírgulas, no ultimo caso de cada cena tem sempre uma virgula a mais e eu n sei de q maneira fazer sem ser com contadores
+
+				if type (dic.get(gr)) == str:
+					write_file.write("\"" + dic.get(gr).replace('"','\\"') + "\",\n")
+				elif type (dic.get(gr)) == int:
+					write_file.write(str(dic.get(gr)) + ",\n")
+				elif type (dic.get(gr)) == list:
+					write_file.write("[")
+					for i in dic.get(gr):	
+						if type (i) == str:
+							write_file.write("\"" + i + "\",")
+						elif type (i) == int:
+							write_file.write( str(i) + ",")
+					write_file.write("],\n")
+
+			write_file.write("    },\n")
+
 				
 		else:
 			print('Error in line: {}'.format(line_count))
+
+	write_file.write("]")
+
+	fd.close()
+	write_file.close()
 
 else:
 	print("ERRO")
