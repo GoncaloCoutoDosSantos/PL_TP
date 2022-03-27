@@ -8,7 +8,7 @@ states = [("special","inclusive"),("mode","exclusive"),("erro","exclusive")]
 
 reg_palavra = r'(([^",\n]?("")?)*|(".*"))'
 reg_num = r'(\+|-)?\d+(\.\d+)?'
-reg_bool = r'true|false'
+reg_bool = r'[Tt][Rr][uU][eE]|[Ff][aA][Ll][Ss][eE]'
 
 #Token que capta virgulas no modo especial
 #Responsavel por contar as virgulas que ja apareceram e que falta e de voltar ao modo normal
@@ -88,7 +88,7 @@ def t_SPACE(t):
 #Token responsavel por tratar do inicio de uma lista responsavel pelo o tratamento dos limites da mesma 
 
 def t_BEGINSPECIAL(t):
-	r"{.*}"
+	r"{([ ]|,|\d)*}"
 	t.lexer.begin("special")
 	match = re.match(r"{ *(\d+) *(?:, *(\d+) *)?}|{ *, *(\d+) *}",t.value)
 
@@ -152,12 +152,11 @@ def proc_agre(array,mode):
 		ret = 0
 		for i in array:
 			ret += float(i)
-		ret = "{:g}".format(ret)
 	elif mode == 'media':
 		ret = 0
 		for i in array:
 			ret += float(i)
-		ret = "{:g}".format(ret / lenght)
+		ret = (ret / len(array))
 	elif mode == 'concat':
 		ret = "".join(array)
 	else:
@@ -169,7 +168,7 @@ def proc_agre(array,mode):
 
 file = input("Nome do ficheiro:")
 
-fd = open("file","r")
+fd = open(file,"r")
 
 if(fd):
 	write_file = open(file + ".json", "w")
@@ -193,7 +192,7 @@ if(fd):
 		else: lexer.reg = lexer.reg[:-1]
 
 		lexer.reg += r"$"
-		#print(lexer.reg)
+		print(lexer.reg)
 
 		reg = re.compile(lexer.reg)
 
@@ -224,8 +223,6 @@ if(fd):
 
 					if type (dic.get(gr)) == str:
 						write_file.write("\"" + dic.get(gr).replace('"','\\"') + "\"")
-					elif type (dic.get(gr)) == int:
-						write_file.write(str(dic.get(gr)))
 					elif type (dic.get(gr)) == list:
 						write_file.write("[")
 
@@ -235,10 +232,14 @@ if(fd):
 							else: virg = True
 							if type (i) == str:
 								write_file.write("\"" + i + "\"")
+							if type(i) == bool:
+								write_file.write(str(i))
 							else:
 								write_file.write("{:g}".format(i))
 
 						write_file.write("]")
+					else:
+						write_file.write("{:g}".format(dic.get(gr)))
 
 				write_file.write("\n    }")
 
@@ -252,6 +253,6 @@ if(fd):
 		write_file.close()
 
 	else:
-		print("ERRO")
+		print("ERRO | "+str(lexer.count))
 else:
 	print("Não foi possivel abrir o ficheiro")
