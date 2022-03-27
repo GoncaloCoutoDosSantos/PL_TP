@@ -8,6 +8,7 @@ states = [("special","inclusive"),("mode","exclusive"),("erro","exclusive")]
 
 reg_palavra = r'(([^",\n]?("")?)*|(".*"))'
 reg_num = r'(\+|-)?\d+(\.\d+)?'
+reg_bool = r'true|false'
 
 
 def t_VIRGULA(t):
@@ -51,7 +52,7 @@ def t_special_BEGINMODE(t):
 
 def t_mode_CAMPO(t):
 	r"\w+"
-	modes = {'sum' : reg_num,'media' : reg_num,"concat":reg_palavra}
+	modes = {'sum' : reg_num,'media' : reg_num,"concat":reg_palavra,"str":reg_palavra,"bool":reg_bool}
 	if t.value in modes:
 		t.lexer.atual = ((t.lexer.atual[0][0] + "_" + t.value,t.value),t.lexer.atual[1],modes[t.value])#TODO proteger caso n exista no dic de modos 
 		t.lexer.begin("special")
@@ -87,7 +88,7 @@ def t_BEGINSPECIAL(t):
 			t.lexer.count = second
 			reg = r"({0})?," * (second-1) + r"({0})?"
 			
-		t.lexer.atual = ((t.lexer.atual,"normal"),reg,".+")
+		t.lexer.atual = ((t.lexer.atual,"normal"),reg,reg_num)
 	else:
 		print("Erro modo de agregação mal formatado: {}".format(t.value))
 		t.lexer.reg = ""
@@ -112,31 +113,26 @@ def proc_agre(array,mode):
 	if mode == 'normal':
 		ret = []
 		for i in array:
-			try:
-				i = int(i)
-				ret.append(i)
-			except:
-				try:
-					i = bool(i)
-					ret.append(i)
-				except:
-					ret.append(i)
-
+			i = float(i)
+			ret.append(i)
+	elif mode == 'str':
+		ret = []
+		for i in array:
+			ret.append(i)
+	elif mode == 'bool':
+		ret = []
+		for i in array:
+			ret.append(bool(i))
 	elif mode == 'sum':
 		ret = 0
 		for i in array:
-			try:
-				ret += float(i)
-		#ret = "{:g}".format(ret)
+			ret += float(i)
+		ret = "{:g}".format(ret)
 	elif mode == 'media':
 		ret = 0
-		lenght = 0
 		for i in array:
-			try:
-				ret += float(i)
-				lenght ++
-		#ret = "{:g}".format(ret / lenght)
-		ret = float(ret / lenght)
+			ret += float(i)
+		ret = "{:g}".format(ret / lenght)
 	elif mode == 'concat':
 		ret = "".join(array)
 	else:
@@ -209,10 +205,8 @@ if(lexer.reg != "" and lexer.count == 0 and not(lexer.atual in lexer.ids)):
 						else: virg = True
 						if type (i) == str:
 							write_file.write("\"" + i + "\"")
-						elif type (i) == int:
-							write_file.write(str(i))
-						elif type (i) == float:
-							write_file.write(float(i))
+						else:
+							write_file.write("{:g}".format(i))
 
 					write_file.write("]")
 

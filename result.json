@@ -1,0 +1,17 @@
+[
+    {
+        "Número" : "3162",
+        "Nome" : "\"Cândido, \"\"Faísca\"",
+        "Curso" : "Teatro",
+        "Notas" : [12,13,14],
+        "ola" : "1"
+    },
+,
+    {
+        "Número" : "264",
+        "Nome" : "Marcelo Sousa",
+        "Curso" : "Ciência Política",
+        "Notas" : [18,19,19,20],
+        "ola" : "c"
+    }
+]
