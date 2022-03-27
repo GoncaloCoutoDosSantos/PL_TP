@@ -6,7 +6,7 @@ tokens = ["VIRGULA","CAMPO","SPACE","BEGINSPECIAL","BEGINMODE"]
 states = [("special","inclusive"),("mode","exclusive"),("erro","exclusive")]
 
 
-reg_palavra = r'(([^",\n]?("")?)*|(".*"))'
+reg_palavra = r'(([^",\n]+)|(".*"))'
 reg_num = r'(\+|-)?\d+(\.\d+)?'
 reg_bool = r'[Tt][Rr][uU][eE]|[Ff][aA][Ll][Ss][eE]'
 
@@ -132,8 +132,19 @@ def t_ANY_error(t):
 #mode -> modo de agregação
 
 def proc_agre(array,mode):
-	array = array.split(",")
-	array = [i for i in array if i != '']
+	aspas = False
+	array_aux = []
+	aux = ""
+	for i in array:
+		if i == '"': aspas = not aspas
+		if not aspas and i == ',':
+			array_aux.append(aux)
+			aux = ""
+		else:
+			aux += i
+	array_aux.append(aux)
+	array = [i for i in array_aux if i != '']
+	print(array)
 
 	if mode == 'normal':
 		ret = []
@@ -158,6 +169,8 @@ def proc_agre(array,mode):
 			ret += float(i)
 		ret = (ret / len(array))
 	elif mode == 'concat':
+		for i in range(len(array)):
+			if array[i][0] == array[i][-1] and array[i][0] == '"': array[i] = array[i][1:-1]
 		ret = "".join(array)
 	else:
 		print('Modo Desconhecido')
@@ -222,6 +235,8 @@ if(fd):
 					write_file.write("        \"" + gr + "\" : ")
 
 					if type (dic.get(gr)) == str:
+						print(dic.get(gr))
+						if len(dic.get(gr)) > 0 and dic.get(gr)[0] == dic.get(gr)[-1] and dic.get(gr)[0] == '"': dic[gr] = dic[gr][1:-1] 
 						write_file.write("\"" + dic.get(gr).replace('"','\\"') + "\"")
 					elif type (dic.get(gr)) == list:
 						write_file.write("[")
@@ -231,8 +246,9 @@ if(fd):
 							if virg: write_file.write(",")
 							else: virg = True
 							if type (i) == str:
+								if i[0] == i[-1] and i[0] == '"': i = i[1:-1]
 								write_file.write("\"" + i + "\"")
-							if type(i) == bool:
+							elif type(i) == bool:
 								write_file.write(str(i))
 							else:
 								write_file.write("{:g}".format(i))
