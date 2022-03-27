@@ -112,18 +112,31 @@ def proc_agre(array,mode):
 	if mode == 'normal':
 		ret = []
 		for i in array:
-			i = int(i)
-			ret.append(int(i))
+			try:
+				i = int(i)
+				ret.append(i)
+			except:
+				try:
+					i = bool(i)
+					ret.append(i)
+				except:
+					ret.append(i)
+
 	elif mode == 'sum':
 		ret = 0
 		for i in array:
-			ret += float(i)
-		ret = "{:g}".format(ret)
+			try:
+				ret += float(i)
+		#ret = "{:g}".format(ret)
 	elif mode == 'media':
 		ret = 0
+		lenght = 0
 		for i in array:
-			ret += float(i)
-		ret = "{:g}".format(ret / len(array))
+			try:
+				ret += float(i)
+				lenght ++
+		#ret = "{:g}".format(ret / lenght)
+		ret = float(ret / lenght)
 	elif mode == 'concat':
 		ret = "".join(array)
 	else:
@@ -162,7 +175,10 @@ if(lexer.reg != "" and lexer.count == 0 and not(lexer.atual in lexer.ids)):
 
 	write_file.write("[\n")
 
+	virg2 = False
 	for line in fd:
+		if virg2: write_file.write(",\n")
+		else: virg2 = True
 		line_count+=1
 		proc = reg.match(line)
 		if proc:
@@ -173,31 +189,40 @@ if(lexer.reg != "" and lexer.count == 0 and not(lexer.atual in lexer.ids)):
 			#print(dic)
 
 			write_file.write("    {\n")
-
+			virg1 = False
 			for gr in dic:
+				if virg1: write_file.write(",\n")
+				else: virg1 = True
 
-				write_file.write("        \"" + gr + "\" : ")#a unica coisa q falta é tratar das vírgulas, no ultimo caso de cada cena tem sempre uma virgula a mais e eu n sei de q maneira fazer sem ser com contadores
+				write_file.write("        \"" + gr + "\" : ")
 
 				if type (dic.get(gr)) == str:
-					write_file.write("\"" + dic.get(gr).replace('"','\\"') + "\",\n")
+					write_file.write("\"" + dic.get(gr).replace('"','\\"') + "\"")
 				elif type (dic.get(gr)) == int:
-					write_file.write(str(dic.get(gr)) + ",\n")
+					write_file.write(str(dic.get(gr)))
 				elif type (dic.get(gr)) == list:
 					write_file.write("[")
-					for i in dic.get(gr):	
-						if type (i) == str:
-							write_file.write("\"" + i + "\",")
-						elif type (i) == int:
-							write_file.write( str(i) + ",")
-					write_file.write("],\n")
 
-			write_file.write("    },\n")
+					virg = False
+					for i in dic.get(gr):	
+						if virg: write_file.write(",")
+						else: virg = True
+						if type (i) == str:
+							write_file.write("\"" + i + "\"")
+						elif type (i) == int:
+							write_file.write(str(i))
+						elif type (i) == float:
+							write_file.write(float(i))
+
+					write_file.write("]")
+
+			write_file.write("\n    }")
 
 				
 		else:
 			print('Error in line: {}'.format(line_count))
 
-	write_file.write("]")
+	write_file.write("\n]")
 
 	fd.close()
 	write_file.close()
