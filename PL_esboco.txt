@@ -1,0 +1,56 @@
+N E LL(1)
+-------------------------
+Lista : "[" "]"
+      | "[" LCont "]"
+
+LCont : num
+      | LCont "," num
+
+num : "\d+"
+
+--------------------------------------
+
+E LL(1)
+
+---------------------------------------
+
+Lista : "[" Lista2
+
+Lista2 : "]"
+       | LCont "]"
+
+LCount : num LCount2
+
+LCount2 : "," num LCount2 # sum(p[2]);print("ola")
+	    | "" -> epsoln 
+
+num : "\d+"
+
+# LCount : ()
+	total += p[1]
+
+# LCount2*1:
+	print("Es estupido")
+
+## total = 0
+
+## sum(a):
+	total += a
+
+''' asdasdsadas '''
+
+--------------------------------------------
+Modos: 
+	ler produçoes 
+	ler funçoes a as produçoes 
+	ler funcoes de produçoes
+	ler codigo geral (dividir em dois(atributos e funçoes))
+	comentarios '''
+
+restriçoes:
+	nome de produçoes e alfanumerico 
+	"" sao sempre terminal(excepto epsoln) 
+
+-------------------------------------------
+ Exemplo frase linguagem 
+[2,3,4,5]
