@@ -1,0 +1,14 @@
+[
+    {
+        "supermercado" : "Pingo Doce",
+        "produtos_concat" : "azeite,leite,vinho,agua"
+    },
+    {
+        "supermercado" : "Modelo",
+        "produtos_concat" : "pao arroz quijo fiambre"
+    },
+    {
+        "supermercado" : "intermache",
+        "produtos_concat" : ""
+    }
+]

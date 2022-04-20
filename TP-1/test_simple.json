@@ -1,0 +1,20 @@
+[
+    {
+        "Notas_media" : 13,
+        "ola" : "true",
+        "tudo" : "false",
+        "bools_bool" : [True,True]
+    },
+    {
+        "Notas_media" : 9.66,
+        "ola" : "b",
+        "tudo" : "c",
+        "bools_bool" : [True]
+    },
+    {
+        "Notas_media" : 19,
+        "ola" : "c",
+        "tudo" : "d",
+        "bools_bool" : [True]
+    }
+]
