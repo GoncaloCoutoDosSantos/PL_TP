@@ -144,7 +144,6 @@ def proc_agre(array,mode):
 			aux += i
 	array_aux.append(aux)
 	array = [i for i in array_aux if i != '']
-	print(array)
 
 	if mode == 'normal':
 		ret = []
@@ -204,22 +203,22 @@ if(fd):
 		if(lexer.atual != ""): lexer.reg += (r'(?P<{0}>'+reg_palavra+')').format(lexer.atual)
 		else: lexer.reg = lexer.reg[:-1]
 
-		lexer.reg += r",?$"
-		print(lexer.reg)
+		lexer.reg += r"$"
 
 		reg = re.compile(lexer.reg)
 
-		line_count = 0
+		line_count = 1
 
 		write_file.write("[\n")
 
 		virg2 = False
 		for line in fd:
-			if virg2: write_file.write(",\n")
-			else: virg2 = True
+
 			line_count+=1
 			proc = reg.match(line)
 			if proc:
+				if virg2: write_file.write(",\n")
+				else: virg2 = True
 				dic = proc.groupdict()
 				#processa e passa json 
 				for group,mode in lexer.pros_proc:
@@ -235,7 +234,6 @@ if(fd):
 					write_file.write("        \"" + gr + "\" : ")
 
 					if type (dic.get(gr)) == str:
-						print(dic.get(gr))
 						if len(dic.get(gr)) > 0 and dic.get(gr)[0] == dic.get(gr)[-1] and dic.get(gr)[0] == '"': dic[gr] = dic[gr][1:-1] 
 						write_file.write("\"" + dic.get(gr).replace('"','\\"') + "\"")
 					elif type (dic.get(gr)) == list:
