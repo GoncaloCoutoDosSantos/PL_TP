@@ -1,4 +1,24 @@
-Número,Nome,Curso,Notas{ ,5 },,,,,ola
-3162,"Cândido, ""Faísca",Teatro,12,13,14,,,1
-7777,Cristiano Ronaldo,De""""sporto,17.3,-1a2,20,11,12,b
-264,Marcelo Sousa,Ciência Política,18,19,19,20,,c
+Lista : "[" Lista2
+
+Lista2 : "]"
+       | LCont "]"
+
+LCount : num LCount2
+
+LCount2 : "," num LCount2 # sum(p[2]);print("ola")
+	    | ""
+
+num : "\d+"
+
+# LCount :
+	total += p[1]
+	
+# LCount2*1:
+	print("Es estupido")
+
+## total = 0
+
+## sum(a):
+	total += a
+
+''' asdasdsadas '''
