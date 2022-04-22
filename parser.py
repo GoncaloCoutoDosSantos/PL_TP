@@ -37,7 +37,8 @@ t_ignore = " \n\t"
 
 def t_prod_TERM(t):
 	r'"[^"]*"'
-	t.lexer.prod_atual.append(t.value)
+	if(t.value != '""'):t.lexer.prod_atual.append(t.value)
+	else: t.lexer.prod_atual.append("?")
 	if(not(t.value in t.lexer.term) and t.value != '""'):
 		t.lexer.term.append(t.value)
 	#print("prod term")
@@ -129,20 +130,20 @@ def t_ANY_error(t):
 	#print("Erro:",t)
 	t.lexer.skip(1)
 
-fd = open("test","r")
+def parser_file(file):
 
-lexer = lex.lex()
-lexer.prod_name = ""
-lexer.prod_atual = []
-lexer.prods = {}
-lexer.term = []
+	fd = open(file,"r")
 
-for line in fd:
-	lexer.input(line)
-	for token in lexer:
-		pass
-		#print(token)
+	lexer = lex.lex()
+	lexer.prod_name = ""
+	lexer.prod_atual = []
+	lexer.prods = {}
+	lexer.term = []
 
-for i in lexer.prods:
-	print(lexer.prods[i])
-print(lexer.term)
+	for line in fd:
+		lexer.input(line)
+		for token in lexer:
+			pass
+			#print(token)
+
+	return (lexer.term,lexer.prods)
