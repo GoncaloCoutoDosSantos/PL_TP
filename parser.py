@@ -38,7 +38,7 @@ t_ignore = " \n\t"
 def t_prod_TERM(t):
 	r'"[^"]*"'
 	if(t.value != '""'):t.lexer.prod_atual.append(t.value)
-	else: t.lexer.prod_atual.append("?")
+	else: t.lexer.prod_atual.append(None)
 	if(not(t.value in t.lexer.term) and t.value != '""'):
 		t.lexer.term.append(t.value)
 	#print("prod term")
