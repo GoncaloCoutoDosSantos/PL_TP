@@ -1,12 +1,11 @@
-Lista : "\[" Lista2
+Lista : "[" Lista2
 
-Lista2 : "\]"
-       | LCount "\]"
+Lista2 : "]"
+       | LCount "]"
 
-LCount : num LCount2 
-
-LCount2 : "," num LCount2 # sum(p[2]);print("ola")
-	 | ""
+LCount : num 
+       | LCount "," num
+       | ""
 
 num : "\d+"
 

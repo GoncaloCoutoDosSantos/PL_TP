@@ -1,9 +1,49 @@
 import parser
-
+import re
 from grammar import Grammar
+import sys
 
 term,prods = parser.parser_file("test")
 
 g = Grammar(term,prods)
 
-g.print()		
+
+table,reg,num_term = g.gen_table()
+
+reg = re.compile(reg)
+
+for line in sys.stdin:
+	#nome da regra,numero da regra,onde na regra
+	name_p = "Lista"
+	ind_p = 0
+	pos_p = 0
+	stack = []
+
+	while line:
+		match = reg.match(line)
+		p_n = table[name_p][match.lastindex-1]
+		if p_n != None:
+			line = line[match.end():]
+			pos_p += 1
+			p = prods[name_p][ind_p]
+
+			while pos_p > len(p) and p[pos_p] in term and line:
+					match = reg.match(line)
+					if term[match.lastindex - 1] == p[pos_p]:
+						pos_p += 1
+						line = line[match.end():]
+
+			if pos_p >= len(p):
+				if len(stack) == 1:
+					print("frase pertence")
+					line = []
+				else:
+					name_p,ind_p,pos_p = stack.pop()
+			else:
+				stack.append((name_p,ind_p,pos_p))
+				name_p,ind_p,pos_p = (p[pos_p],p_n,0)
+
+
+		else:
+			line = []
+			print("frase n pertence")
