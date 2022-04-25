@@ -107,14 +107,7 @@ class Grammar:
 		return ret
 
 	def gen_table(self):
-		reg = ""
-		dic_term = {}
 		table = {}
-		for i in range(len(self.term)):
-			reg += "(" + self.term[i][1:-1] + ")|"
-			dic_term[i] = self.term[i]
-
-		reg = reg[:-1]
 
 		for i in self.prods:
 			aux = []
@@ -124,7 +117,7 @@ class Grammar:
 					if self.term[t] in self.lookahead_p[i][j]:
 						aux[t] = j
 				table[i] = aux
-		return (table,reg,dic_term)
+		return (table)
 
 	def print(self):
 		self.print_errors()
