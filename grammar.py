@@ -51,25 +51,29 @@ class Grammar:
 					self.error.add((p,"Recursividade Esquerda"))
 				else:
 					aux = self.first(i)
-					self.join_arr(ret,aux,(p,"First/First"))
+					self.join_arr_err(ret,aux,(p,"First/First"))
 			else:
 				aux = self.follow(p)
-				self.join_arr(ret,aux,(p,"First/Follow"))
+				self.join_arr_err(ret,aux,(p,"First/Follow"))
 
 		return ret
 
-	def join_arr(self,a1,a2,e): #funçao auxiliar que junta dois arrais e deteta os erros de tipo First/First Follow/First
+	def join_arr_err(self,a1,a2,e): #funçao auxiliar que junta dois arrais e deteta os erros de tipo First/First Follow/First
 		for i in a2:
 			if i in a1:
 				self.error.add(e)
 			else:
 				a1.append(i)
 
+	def join_arr(self,a1,a2):
+		for i in a2:
+			if not(i in a1):
+				a1.append(i)
+
 	def follow(self,p):
 		ret = []
 		if p in self.follow_p:
 			ret = self.follow_p[p]
-		else:
 			for i in self.appear_p[p]:
 				for j in self.prods[i]:
 					ini = 0
@@ -77,12 +81,13 @@ class Grammar:
 						ini = j.index(p,ini) + 1
 						if ini >= len(j):
 							if i != p:
-								ret = ret + self.follow(i)
+								self.join_arr(ret,self.follow(i))
 						else:
 							if j[ini] in self.term:
-								ret.append(j[ini])
+								if not(j[ini] in ret):
+									ret.append(j[ini])
 							else:
-								ret = ret + self.first(j[ini])
+								self.join_arr(ret,self.first(j[ini]))
 			self.follow_p[p] = ret
 		return ret
 
@@ -106,10 +111,8 @@ class Grammar:
 				table[i] = aux
 		return (table,reg,dic_term)
 
-
 	def print(self):
-		for i in self.error:
-			print(i)
+		self.print_errors()
 		print("\n",self.term,end = "\n\n")
 		for i in self.prods:
 			print("Produção ",i,":")
@@ -119,4 +122,10 @@ class Grammar:
 			print("lookahead:")
 			for j in self.lookahead_p[i]:
 				print(j)
-				
+
+	def print_errors(self):
+		for i in self.error:
+			print(i)
+
+	def is_ll(self):
+		return not(len(self.error))

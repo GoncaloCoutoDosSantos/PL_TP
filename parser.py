@@ -10,6 +10,7 @@ def t_NORMAL(t):
 	r"\w+"
 	#print("default normal")
 	t.lexer.prod_name = t.value;
+	if not(t.lexer.axioma): t.lexer.axioma = t.value #corrigir
 
 def t_PROD(t):
 	r":|\|"
@@ -139,6 +140,7 @@ def parser_file(file):
 	lexer.prod_atual = []
 	lexer.prods = {}
 	lexer.term = []
+	lexer.axioma = ""
 
 	for line in fd:
 		lexer.input(line)
@@ -146,4 +148,4 @@ def parser_file(file):
 			pass
 			#print(token)
 
-	return (lexer.term,lexer.prods)
+	return (lexer.term,lexer.prods,lexer.axioma)
