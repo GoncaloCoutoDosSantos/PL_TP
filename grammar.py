@@ -1,12 +1,13 @@
 class Grammar:
 
-	def __init__(self, term, prods):
+	def __init__(self, term, prods,axioma):
 		self.term = term
 		self.prods = prods
 		self.error = set()
-		first_p = {}
+		first_p = {} # first de uma produçao(terminal ou n )
 		follow_p = {}
-		appear_p = {}
+		follow_p[axioma] = [""] # "" = simbolo terminal
+		appear_p = {} # key = produçoa | value = lista de produeçoes onde a key 
 		lookahead_p = {}
 
 		for i in prods:
@@ -14,6 +15,8 @@ class Grammar:
 			first_p[i] = ([],[])
 			lookahead_p[i] = []
 
+
+		# prenche o first_p e o appear_p
 		for i in prods:
 			for j in prods[i]:
 				if j[0] in term:
@@ -31,6 +34,9 @@ class Grammar:
 		self.follow_p = follow_p
 		self.appear_p = appear_p
 		self.lookahead_p = lookahead_p
+
+		#calculo do lookahead
+		#percorre todas as produçoes (descobre o first terminal)
 
 		for i in prods:
 			for j in prods[i]:
@@ -84,7 +90,7 @@ class Grammar:
 			if not(i in a1):
 				a1.append(i)
 
-	def follow(self,p):
+	def follow(self,p,v = []):
 		ret = []
 		if p in self.follow_p:
 			ret = self.follow_p[p]
@@ -95,15 +101,17 @@ class Grammar:
 					while p in j[ini:]:
 						ini = j.index(p,ini) + 1
 						if ini >= len(j):
-							if i != p:
-								self.join_arr(ret,self.follow(i))
+							if i != p and not(i in v):
+								v.append(i)
+								self.join_arr(ret,self.follow(i,v))
+								v.pop()
 						else:
 							if j[ini] in self.term:
 								if not(j[ini] in ret):
 									ret.append(j[ini])
 							else:
 								self.join_arr(ret,self.first(j[ini]))
-			self.follow_p[p] = ret
+		if v == []: self.follow_p[p] = ret
 		return ret
 
 	def gen_table(self):

@@ -139,7 +139,7 @@ def parser_file(file):
 	lexer.prod_name = ""
 	lexer.prod_atual = []
 	lexer.prods = {}
-	lexer.term = []
+	lexer.term = [""]
 	lexer.axioma = ""
 
 	for line in fd:
