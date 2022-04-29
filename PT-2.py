@@ -6,7 +6,7 @@ import sys
 #term -> simbolos terminais
 #prods -> produçoes (dic key = nome da produçao | value lista das sua reproduçoes)
 
-term,prods,axioma = parser.parser_file("test")
+term,prods,axioma = parser.parser_file("test_3")
 
 print(term)
 
