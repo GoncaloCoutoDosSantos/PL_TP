@@ -25,6 +25,7 @@ def t_CODE(t):
 def t_FUNC(t):
 	r"\#"
 	#print("begin func")
+	t.lexer.aux = ""
 	t.lexer.begin("func")
 
 def t_COMMENT(t):
@@ -69,8 +70,12 @@ def t_prod_END(t):
 
 def save_prod(t):
 	name = t.lexer.prod_name
-	if(name in t.lexer.prods): t.lexer.prods[name].append(t.lexer.prod_atual)
-	else: t.lexer.prods[name] = [t.lexer.prod_atual]
+	if(name in t.lexer.prods): 
+		t.lexer.prods[name].append(t.lexer.prod_atual)
+		t.lexer.act_sem[name].append("")
+	else: 
+		t.lexer.prods[name] = [t.lexer.prod_atual]
+		t.lexer.act_sem[name] = [""]
 	t.lexer.prod_atual = []
 
 t_prod_ignore = " "
@@ -79,7 +84,7 @@ t_prod_ignore = " "
 
 def t_prodfunc_NORMAL(t):
 	r".+\n"
-	#print("begin default")
+	t.lexer.act_sem[t.lexer.prod_name][-1] = t.value
 	t.lexer.begin("INITIAL")
 
 t_prodfunc_ignore = " "
@@ -90,12 +95,10 @@ t_prodfunc_ignore = " "
 
 def t_func_NORMAL(t):
 	r".+\n"
-	#print("func normal")
-	#print(t.value)
+	t.lexer.aux += t.value
 
 def t_func_END(t):
 	r"^[^\t]"
-	#print("begin default")
 	t.lexer.begin("INITIAL")
 
 
@@ -115,6 +118,8 @@ def t_code_END(t):
 t_code_ignore = " "
 
 #-----------------------COMMENT--------------------------
+
+#precisa de ser alterado para voltar o modo que estava para permitir fazer comentarios dentro de funçoes
 
 t_comment_NORMAL = r"\S+"
 
@@ -141,6 +146,7 @@ def parser_file(file):
 	lexer.prods = {}
 	lexer.term = [""]
 	lexer.axioma = ""
+	lexer.act_sem = {}
 
 	for line in fd:
 		lexer.input(line)
@@ -148,4 +154,4 @@ def parser_file(file):
 			pass
 			#print(token)
 
-	return (lexer.term,lexer.prods,lexer.axioma)
+	return (lexer.term,lexer.prods,lexer.axioma,lexer.act_sem)
