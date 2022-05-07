@@ -1,8 +1,9 @@
 from ply import lex
+import re
 
 tokens = ["TERM","NORMAL","PROD","FUNC","CODE","COMMENT","END"]
 
-states = [("prod","exclusive"),("prodfunc","exclusive"),("func","exclusive"),("code","exclusive"),("comment","exclusive")]
+states = [("prod","exclusive"),("prodfunc","exclusive"),("func","exclusive"),("funcname","exclusive"),("code","exclusive"),("comment","exclusive")]
 
 #-------------------DEFAULT---------------------------
 
@@ -26,7 +27,7 @@ def t_FUNC(t):
 	r"\#"
 	#print("begin func")
 	t.lexer.aux = ""
-	t.lexer.begin("func")
+	t.lexer.begin("funcname")
 
 def t_COMMENT(t):
 	r"'''"
@@ -83,8 +84,10 @@ t_prod_ignore = " "
 #--------------------PRODFUNC---------------------------
 
 def t_prodfunc_NORMAL(t):
-	r".+\n"
-	t.lexer.act_sem[t.lexer.prod_name][-1] = t.value
+	#r"(.+?)(?:;|$)\n"
+	r".*\n"	
+	pf = t.value.replace(";","\n\t")
+	t.lexer.act_sem[t.lexer.prod_name][-1] = pf
 	t.lexer.begin("INITIAL")
 
 t_prodfunc_ignore = " "
@@ -92,10 +95,20 @@ t_prodfunc_ignore = " "
 #---------------------FUNC-------------------------------
 
 ##precisa de ser melhorado para aceitar funçoes sem espaços entre elas
+def t_funcname_NORMAL(t):
+	r"(.+)(\*(\d+))?:\n"
+	t.lexer.aux = re.match(r"(\w+)(?:\*(\d+))?:\n",t.value)
+	#print(t.lexer.aux.group(1))
+	t.lexer.begin("func")
+
+t_funcname_ignore = " "
 
 def t_func_NORMAL(t):
 	r".+\n"
-	t.lexer.aux += t.value
+	if t.lexer.aux.group(2) == None:
+		t.lexer.act_sem[t.lexer.aux.group(1)][-1] += t.value.replace("\t","")
+	else:
+		t.lexer.act_sem[t.lexer.aux.group(1)][int(t.lexer.aux.group(2))] += t.value.replace("\t","")
 
 def t_func_END(t):
 	r"^[^\t]"
@@ -108,6 +121,7 @@ t_func_ignore = " "
 
 def t_code_NORMAL(t):
 	r".+\n"
+	t.lexer.code += t.value
 	#print("code normal")
 
 def t_code_END(t):
@@ -147,6 +161,7 @@ def parser_file(file):
 	lexer.term = [""]
 	lexer.axioma = ""
 	lexer.act_sem = {}
+	lexer.code = ""
 
 	for line in fd:
 		lexer.input(line)
@@ -154,4 +169,4 @@ def parser_file(file):
 			pass
 			#print(token)
 
-	return (lexer.term,lexer.prods,lexer.axioma,lexer.act_sem)
+	return (lexer.term,lexer.prods,lexer.axioma,lexer.act_sem,lexer.code)

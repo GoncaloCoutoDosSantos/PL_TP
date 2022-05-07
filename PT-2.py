@@ -6,7 +6,7 @@ import sys
 #term -> simbolos terminais
 #prods -> produçoes (dic key = nome da produçao | value lista das sua reproduçoes)
 
-term,prods,axioma,act_sem = parser.parser_file("test")
+term,prods,axioma,act_sem,codex = parser.parser_file("test")
 
 g = Grammar(term,prods,axioma)
 
@@ -74,6 +74,7 @@ def t_error(t):
 #--------------------------Codigo--------------------------------------------------
 
 	code = '''
+
 lexer = lex.lex()
 
 for line in sys.stdin:
@@ -145,7 +146,7 @@ for line in sys.stdin:
 '''.format(axioma,prods,term,table,dic_sem)
 
 	fd = open("gen.py","w")
-	fd.write(imports + lexer_code + act_sem_t + code + table)
+	fd.write(imports + lexer_code + act_sem_t + codex + code + table)
 	fd.close()
 
 else:
