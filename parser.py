@@ -1,8 +1,9 @@
 from ply import lex
+import re
 
 tokens = ["TERM","NORMAL","PROD","FUNC","CODE","COMMENT","END"]
 
-states = [("prod","exclusive"),("prodfunc","exclusive"),("func","exclusive"),("code","exclusive"),("comment","exclusive")]
+states = [("prod","exclusive"),("prodfunc","exclusive"),("func","exclusive"),("funcname","exclusive"),("code","exclusive"),("comment","exclusive")]
 
 #-------------------DEFAULT---------------------------
 
@@ -25,7 +26,8 @@ def t_CODE(t):
 def t_FUNC(t):
 	r"\#"
 	#print("begin func")
-	t.lexer.begin("func")
+	t.lexer.aux = ""
+	t.lexer.begin("funcname")
 
 def t_COMMENT(t):
 	r"'''"
@@ -69,8 +71,12 @@ def t_prod_END(t):
 
 def save_prod(t):
 	name = t.lexer.prod_name
-	if(name in t.lexer.prods): t.lexer.prods[name].append(t.lexer.prod_atual)
-	else: t.lexer.prods[name] = [t.lexer.prod_atual]
+	if(name in t.lexer.prods): 
+		t.lexer.prods[name].append(t.lexer.prod_atual)
+		t.lexer.act_sem[name].append("")
+	else: 
+		t.lexer.prods[name] = [t.lexer.prod_atual]
+		t.lexer.act_sem[name] = [""]
 	t.lexer.prod_atual = []
 
 t_prod_ignore = " "
@@ -78,8 +84,10 @@ t_prod_ignore = " "
 #--------------------PRODFUNC---------------------------
 
 def t_prodfunc_NORMAL(t):
-	r".+\n"
-	#print("begin default")
+	#r"(.+?)(?:;|$)\n"
+	r".*\n"	
+	pf = t.value.replace(";","\n\t")
+	t.lexer.act_sem[t.lexer.prod_name][-1] = pf
 	t.lexer.begin("INITIAL")
 
 t_prodfunc_ignore = " "
@@ -87,15 +95,23 @@ t_prodfunc_ignore = " "
 #---------------------FUNC-------------------------------
 
 ##precisa de ser melhorado para aceitar funçoes sem espaços entre elas
+def t_funcname_NORMAL(t):
+	r"(.+)(\*(\d+))?:\n"
+	t.lexer.aux = re.match(r"(\w+)(?:\*(\d+))?:\n",t.value)
+	#print(t.lexer.aux.group(1))
+	t.lexer.begin("func")
+
+t_funcname_ignore = " "
 
 def t_func_NORMAL(t):
 	r".+\n"
-	#print("func normal")
-	#print(t.value)
+	if t.lexer.aux.group(2) == None:
+		t.lexer.act_sem[t.lexer.aux.group(1)][-1] += t.value.replace("\t","")
+	else:
+		t.lexer.act_sem[t.lexer.aux.group(1)][int(t.lexer.aux.group(2))] += t.value.replace("\t","")
 
 def t_func_END(t):
 	r"^[^\t]"
-	#print("begin default")
 	t.lexer.begin("INITIAL")
 
 
@@ -105,6 +121,7 @@ t_func_ignore = " "
 
 def t_code_NORMAL(t):
 	r".+\n"
+	t.lexer.code += t.value
 	#print("code normal")
 
 def t_code_END(t):
@@ -115,6 +132,8 @@ def t_code_END(t):
 t_code_ignore = " "
 
 #-----------------------COMMENT--------------------------
+
+#precisa de ser alterado para voltar o modo que estava para permitir fazer comentarios dentro de funçoes
 
 t_comment_NORMAL = r"\S+"
 
@@ -141,6 +160,8 @@ def parser_file(file):
 	lexer.prods = {}
 	lexer.term = [""]
 	lexer.axioma = ""
+	lexer.act_sem = {}
+	lexer.code = ""
 
 	for line in fd:
 		lexer.input(line)
@@ -148,4 +169,4 @@ def parser_file(file):
 			pass
 			#print(token)
 
-	return (lexer.term,lexer.prods,lexer.axioma)
+	return (lexer.term,lexer.prods,lexer.axioma,lexer.act_sem,lexer.code)

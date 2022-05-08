@@ -5,20 +5,20 @@ Lista2 : "\]"
 
 LCount : num LCount2 
 
-LCount2 : "," num LCount2 # sum(p[2]);print("ola")
+LCount2 : "," num LCount2 # print(p[0]);sum(p[2]);print("ola")
 	 | ""
 
 num : "\d+"
 
-# LCount :
+# LCount:
 	total += p[1]
-	
+
 # LCount2*1:
 	print("Es estupido")
 
 ## total = 0
 
-## sum(a):
+##def sum(a):
 	total += a
 
 ''' asdasdsadas '''
