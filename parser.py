@@ -97,14 +97,14 @@ t_prodfunc_ignore = " "
 ##precisa de ser melhorado para aceitar funçoes sem espaços entre elas
 def t_funcname_NORMAL(t):
 	r"(.+)(\*(\d+))?:\n"
-	t.lexer.aux = re.match(r"(\w+)(?:\*(\d+))?:\n",t.value)
+	t.lexer.aux = re.match(r"(\w+)(?:\*(\d+))?\S*:\S*\n",t.value)
 	#print(t.lexer.aux.group(1))
 	t.lexer.begin("func")
 
 t_funcname_ignore = " "
 
 def t_func_NORMAL(t):
-	r".+\n"
+	r".+(\n|$)"
 	if t.lexer.aux.group(2) == None:
 		t.lexer.act_sem[t.lexer.aux.group(1)][-1] += t.value.replace("\t","")
 	else:
@@ -120,9 +120,11 @@ t_func_ignore = " "
 #----------------------CODE------------------------------
 
 def t_code_NORMAL(t):
-	r".+\n"
+	r".+(\n|$)"
 	t.lexer.code += t.value
 	#print("code normal")
+
+
 
 def t_code_END(t):
 	r"^[^\t]"
