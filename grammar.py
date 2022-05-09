@@ -44,9 +44,10 @@ class Grammar:
 					aux = [j[0]]
 				elif j[0]:
 					aux = self.first(j[0])
+					self.join_lookahead(i,aux,"First/First")
 				else:
 					aux = self.follow(i)
-				self.join_lookahead(i,aux)
+					self.join_lookahead(i,aux,"First/Follow")
 
 		
 
@@ -66,24 +67,20 @@ class Grammar:
 
 		return ret
 
-	def join_lookahead(self,i,l):
+	def join_lookahead(self,i,l,e):
 		aux = []
 		for k in l:
-			add = True
 			for j in self.lookahead_p[i]:
 				if k in j:
-					add = False
-					self.error.add((i,"First/First"))
-			if add:
-				aux.append(k)
+					self.error.add((i,e))
+			aux.append(k)
 		self.lookahead_p[i].append(aux)
 
 	def join_arr_err(self,a1,a2,e): #funçao auxiliar que junta dois arrais e deteta os erros de tipo First/First Follow/First
 		for i in a2:
 			if i in a1:
 				self.error.add(e)
-			else:
-				a1.append(i)
+			a1.append(i)
 
 	def join_arr(self,a1,a2):
 		for i in a2:
