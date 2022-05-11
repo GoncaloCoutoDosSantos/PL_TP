@@ -1,7 +1,7 @@
 from ply import lex
 import re
 
-tokens = ["TERM","NORMAL","PROD","FUNC","CODE","COMMENT","END"]
+tokens = ["TERM","NORMAL","PROD","FUNC","CODE","COMMENT","END","ERROR"]
 
 states = [("prod","exclusive"),("prodfunc","exclusive"),("func","exclusive"),("funcname","exclusive"),("code","exclusive"),("comment","exclusive")]
 
@@ -64,7 +64,7 @@ def t_prod_NORMAL(t):
 	#print("prod normal")
 
 def t_prod_END(t):
-	r"\n"
+	r"(\n|$)"
 	#print("begin defualt")
 	save_prod(t)
 	t.lexer.begin("INITIAL")
@@ -84,7 +84,6 @@ t_prod_ignore = " "
 #--------------------PRODFUNC---------------------------
 
 def t_prodfunc_NORMAL(t):
-	#r"(.+?)(?:;|$)\n"
 	r".*\n"	
 	pf = t.value.replace(";","\n\t")
 	t.lexer.act_sem[t.lexer.prod_name][-1] = pf
@@ -105,10 +104,14 @@ t_funcname_ignore = " "
 
 def t_func_NORMAL(t):
 	r".+(\n|$)"
-	if t.lexer.aux.group(2) == None:
-		t.lexer.act_sem[t.lexer.aux.group(1)][-1] += t.value.replace("\t","")
+	if t.lexer.aux.group(1) in t.lexer.act_sem:
+		if t.lexer.aux.group(2) == None :
+			t.lexer.act_sem[t.lexer.aux.group(1)][-1] += t.value.replace("\t","")
+		else:
+			t.lexer.act_sem[t.lexer.aux.group(1)][int(t.lexer.aux.group(2))] += t.value.replace("\t","")
 	else:
-		t.lexer.act_sem[t.lexer.aux.group(1)][int(t.lexer.aux.group(2))] += t.value.replace("\t","")
+		print("Não existe o " + t.lexer.aux.group(1) + " na gramática")
+		t.lexer.error = True
 
 def t_func_END(t):
 	r"^[^\t]"
@@ -125,11 +128,15 @@ def t_code_NORMAL(t):
 	#print("code normal")
 
 
-
 def t_code_END(t):
 	r"^[^\t]"
 	#print("begin default")
 	t.lexer.begin("INITIAL")
+
+def t_code_ERROR(t):
+	r"(\#|''')"
+	lexer.error = True
+	print("Deixe uma linha vazia entre diferentes entradas")
 
 t_code_ignore = " "
 
@@ -140,7 +147,7 @@ t_code_ignore = " "
 t_comment_NORMAL = r"\S+"
 
 def t_comment_END(t):
-	r"'''"
+	r"('''|$)"
 	#print("begin default")
 	t.lexer.begin("INITIAL")
 
@@ -164,11 +171,11 @@ def parser_file(file):
 	lexer.axioma = ""
 	lexer.act_sem = {}
 	lexer.code = ""
-
+	lexer.error = False
 	for line in fd:
 		lexer.input(line)
 		for token in lexer:
 			pass
 			#print(token)
 
-	return (lexer.term,lexer.prods,lexer.axioma,lexer.act_sem,lexer.code)
+	return (lexer.term,lexer.prods,lexer.axioma,lexer.act_sem,lexer.code,lexer.error)
