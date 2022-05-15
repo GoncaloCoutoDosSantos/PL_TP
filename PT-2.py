@@ -197,7 +197,7 @@ if not(error):
 		file.close()
 '''.format(axioma,prods,term,table,dic_sem)
 
-	fd = open("gen.py","w")
+	fd = open(input_file + "_parser.py","w")
 	fd.write(imports + lexer_code + act_sem_t + class_aux + codex + code + table)
 	fd.close()
 
