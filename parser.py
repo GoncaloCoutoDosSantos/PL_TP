@@ -201,8 +201,8 @@ def parser_file(file):
 			for token in lexer:
 				pass
 				#print(token)
-	except OSError as e:
-		print("Ficheiro não foi encontrado",e)
+	except:
+		print("Ficheiro não foi encontrado")
 		lexer.error = True
 
 	return (lexer.term,lexer.prods,lexer.axioma,lexer.act_sem,lexer.code,lexer.error)

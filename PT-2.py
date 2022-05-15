@@ -6,9 +6,17 @@ import sys
 #term -> simbolos terminais
 #prods -> produçoes (dic key = nome da produçao | value lista das sua reproduçoes)
 
-input_file = input("Intruduza o nome do ficheiro com a gramatica:")
+error = False
 
-term,prods,axioma,act_sem,codex,error = parser.parser_file(input_file)
+if(len(sys.argv) == 2):
+
+	input_file = sys.argv[1]
+else:
+	error = True
+	print("Intruduza nome do ficheiro")
+
+if not(error):
+	term,prods,axioma,act_sem,codex,error = parser.parser_file(input_file)
 
 '''
 print(term,end="\n\n")
@@ -181,9 +189,8 @@ if not(error):
 				Erro = True
 
 		if Erro:
-			print("Não pertence")
-		if Rec:
-			print("Pertence")
+			if token == "":token = "Terminal"
+			print("Erro na posição:",lexer.lexpos,"no caracter",token)
 		t = deepcopy(antigo_aux)
 
 	if mode_file:
