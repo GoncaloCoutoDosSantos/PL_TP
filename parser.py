@@ -183,27 +183,26 @@ def t_ANY_error(t):
 
 def parser_file(file):
 
+	lexer = lex.lex()
+	lexer.prod_name = ""
+	lexer.prod_atual = []
+	lexer.prods = {}
+	lexer.term = [""]
+	lexer.axioma = ""
+	lexer.act_sem = {}
+	lexer.code = ""
+	lexer.end_comment = 0
+	lexer.error = False
+
 	try:
 		fd = open(file,"r")
-
-
-		lexer = lex.lex()
-		lexer.prod_name = ""
-		lexer.prod_atual = []
-		lexer.prods = {}
-		lexer.term = [""]
-		lexer.axioma = ""
-		lexer.act_sem = {}
-		lexer.code = ""
-		lexer.end_comment = 0
-		lexer.error = False
 		for line in fd:
 			lexer.input(line)
 			for token in lexer:
 				pass
 				#print(token)
-	except:
-		print("Ficheiro não foi encontrado")
+	except OSError as e:
+		print("Ficheiro não foi encontrado",e)
 		lexer.error = True
 
 	return (lexer.term,lexer.prods,lexer.axioma,lexer.act_sem,lexer.code,lexer.error)
