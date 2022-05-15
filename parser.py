@@ -39,7 +39,7 @@ t_ignore = " \n\t"
 #---------------------PROD-------------------------------
 
 def t_prod_TERM(t):
-	r'"[^"]*"'
+	r'"(?:(?:(?!(?<!\\)").)*)"'
 	if(t.value != '""'):t.lexer.prod_atual.append(t.value)
 	else: t.lexer.prod_atual.append(None)
 	if(not(t.value in t.lexer.term) and t.value != '""'):
@@ -216,8 +216,8 @@ def parser_file(file):
 			for token in lexer:
 				pass
 				#print(token)
-	except OSError as e:
-		print("Ficheiro não foi encontrado",e)
+	except:
+		print("Ficheiro não foi encontrado")
 		lexer.error = True
 
 	return (lexer.term,lexer.prods,lexer.axioma,lexer.act_sem,lexer.code,lexer.error)
