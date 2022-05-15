@@ -28,7 +28,11 @@ class Grammar:
 					first_p[i][1].append(j[0])
 				for k in j:
 					if k and not( k in term) and k != "":
-						appear_p[k].add(i)
+						if k in prods:
+							appear_p[k].add(i)
+						else:
+							print("Não existe definição para a produção:",k)
+							raise Exception("")
 
 		self.first_p = first_p 
 		self.follow_p = follow_p
@@ -42,6 +46,7 @@ class Grammar:
 			for j in prods[i]:
 				if j[0] in term:
 					aux = [j[0]]
+					self.join_lookahead(i,aux,"First/First")
 				elif j[0]:
 					aux = self.first(j[0])
 					self.join_lookahead(i,aux,"First/First")
@@ -133,12 +138,13 @@ class Grammar:
 			if i in self.follow_p:
 				print("follow:",self.follow_p[i])
 			print("lookahead:")
-			for j in self.lookahead_p[i]:
-				print(j)
+			print(self.lookahead_p[i])
+			#for j in self.lookahead_p[i]:
+				#print(j)
 
 	def print_errors(self):
 		for i in self.error:
-			print(i)
+			print("Erro encontrado na produção {} do tipo: {}".format(i[0],i[1]))
 
 	def is_ll(self):
 		return not(len(self.error))

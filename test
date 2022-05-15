@@ -1,24 +1,23 @@
-Lista : "\[" Lista2
+Lista : "\[" Lista2 # print(p[1])
 
-Lista2 : "\]"
-       | LCount "\]"
+Lista2 : "\]" # return -1
+       | LCount "\]" # return t.total
 
 LCount : num LCount2 
+LCount2 : "," num LCount2 # print(p[0]);sum(p[1],t)
+	 | "" '''# print("ola")'''
 
-LCount2 : "," num LCount2 # print(p[0]);sum(p[2]);print("ola")
-	 | ""
-
-num : "\d+"
+num : "\d+" # return p[0]
 
 # LCount:
-	total += p[1]
+	t.total += int(p[0])
 
 # LCount2*1:
-	print("Es estupido")
+	return 0
 
-## total = 0
 
-##def sum(a):
-	total += a
-
+##def sum(a,t):
+	t.total += int(a)
+##t_ignore = " \n"
 ''' asdasdsadas '''
+## t.total = 0

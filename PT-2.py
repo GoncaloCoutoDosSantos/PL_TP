@@ -6,17 +6,29 @@ import sys
 #term -> simbolos terminais
 #prods -> produçoes (dic key = nome da produçao | value lista das sua reproduçoes)
 
-term,prods,axioma,act_sem,codex = parser.parser_file("test")
+input_file = input("Intruduza o nome do ficheiro com a gramatica:")
 
-g = Grammar(term,prods,axioma)
+term,prods,axioma,act_sem,codex,error = parser.parser_file(input_file)
 
+'''
+print(term,end="\n\n")
+for i in prods:
+	print(i,prods[i])
+'''
+
+
+#print(error)
+try:
+	if not(error):g = Grammar(term,prods,axioma)
+except:
+	error = True
 #g.print()
 
-if g.is_ll():
+if not(error) and g.is_ll():
 
 	table = g.gen_table()
 
-	imports = "from ply import lex\nimport sys\n\n"
+	imports = "from ply import lex\nimport sys\nfrom copy import deepcopy\n\n"
 
 #--------------------------Lexer----------------------------
 
@@ -53,7 +65,7 @@ def t_error(t):
 
 #--------------------------Açoes_Semanticas-----------------------------------------
 
-	declaration = "def {}_{}(p):"
+	declaration = "def {}_{}(p,t):"
 
 	default = "return None"
 
@@ -73,81 +85,114 @@ def t_error(t):
 
 #--------------------------Codigo--------------------------------------------------
 
+	class_aux = '''
+class Auxiliar:
+	pass
+
+t = Auxiliar()
+
+'''
+
 	code = '''
 
 lexer = lex.lex()
 
-for line in sys.stdin:
-	line = line[:-1]#tira o \\n para ler do stdin
-	lexer.input(line)
+input = sys.stdin
+
+error = False
+
+mode_file = False
+
+antigo_aux = deepcopy(t)
+
+if len(sys.argv) >=2:
+	if len(sys.argv) == 3 and sys.argv[1] == "-f":
+		try:
+			file = open(sys.argv[2],"r")
+			input = [file.read()]
+			mode_file = True
+		except:
+			print("File not found") 
+	else:
+		print("Argumentos não reconhecidos") 
+
+if not(error):
+	for line in input:
+		if not(mode_file):
+			line = line[:-1]#tira o \\n para ler do stdin
+		lexer.input(line)
 '''
 
 	#for i in table:
 	#	print(i,":",table[i])
 
 	table = '''
-	axioma = "{}"
-	prods = {}
-	term = {}
-	table = {}
-	act_sem = {}
+		axioma = "{}"
+		prods = {}
+		term = {}
+		table = {}
+		act_sem = {}
 
-	name_p = axioma
-	ind_p = 0
-	pos_p = 0
-	stack = []
-	p = prods[name_p][pos_p]
-	func = act_sem[name_p][pos_p] 
-	arg = [] 
+		name_p = axioma
+		ind_p = 0
+		pos_p = 0
+		stack = []
+		p = prods[name_p][pos_p]
+		func = act_sem[name_p][pos_p] 
+		arg = [] 
 
-	Erro = False
-	Rec = False
+		Erro = False
+		Rec = False
 
-	match = lexer.token().value
-	token = match[1]
-	match = match[0]
+		match = lexer.token().value
+		token = match[1]
+		match = match[0]
 
-	while not(Erro or Rec):
-		if ind_p >= len(p) or p[ind_p] == None: # acaba prod
-			ret = func(arg)
-			if stack:
-				p,ind_p,func,arg = stack.pop()
-				arg.append(ret)
-			else:
-				Rec = True
+		while not(Erro or Rec):
+			if ind_p >= len(p) or p[ind_p] == None: # acaba prod
+				ret = func(arg,t)
+				if stack:
+					p,ind_p,func,arg = stack.pop()
+					arg.append(ret)
+				else:
+					Rec = True
 
-		elif p[ind_p] in term: # detetou terminal
-			arg.append(token)
-			ind_p += 1
-			match = lexer.token()
-			if match:
-				match = match.value
-				token = match[1]
-				match = match[0]
+			elif p[ind_p] in term: # detetou terminal
+				arg.append(token)
+				ind_p += 1
+				match = lexer.token()
+				if match:
+					match = match.value
+					token = match[1]
+					match = match[0]
 
-		elif match != None and match != -1: #detetou n terminal
-			stack.append((p,ind_p + 1,func,arg))
-			name_p = p[ind_p]
-			aux = table[name_p][match]
-			if aux != None:
-				p = prods[name_p][aux]
-				func = act_sem[name_p][aux] 
-				arg = [] 
-				ind_p = 0
+			elif match != None and match != -1: #detetou n terminal
+				stack.append((p,ind_p + 1,func,arg))
+				name_p = p[ind_p]
+				aux = table[name_p][match]
+				if aux != None:
+					p = prods[name_p][aux]
+					func = act_sem[name_p][aux] 
+					arg = [] 
+					ind_p = 0
+				else:
+					Erro = True
 			else:
 				Erro = True
-		else:
-			Erro = True
 
-	if Erro:
-		print("N pertence")
-	if Rec:
-		print("Pertence")
+		if Erro:
+			print("Não pertence")
+		if Rec:
+			print("Pertence")
+		t = deepcopy(antigo_aux)
+
+	if mode_file:
+		file.close()
 '''.format(axioma,prods,term,table,dic_sem)
 
 	fd = open("gen.py","w")
-	fd.write(imports + lexer_code + act_sem_t + codex + code + table)
+	fd.write(imports + lexer_code + act_sem_t + class_aux + codex + code + table)
 	fd.close()
 
 else:
-	g.print_errors()
+	if not(error):g.print_errors()

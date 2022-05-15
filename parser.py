@@ -32,7 +32,7 @@ def t_FUNC(t):
 def t_COMMENT(t):
 	r"'''"
 	#print("begin comment")
-	t.lexer.begin("comment")
+	t.lexer.push_state("comment")
 
 t_ignore = " \n\t"
 
@@ -64,10 +64,15 @@ def t_prod_NORMAL(t):
 	#print("prod normal")
 
 def t_prod_END(t):
-	r"(\n|$)"
+	r"(\n)"
 	#print("begin defualt")
 	save_prod(t)
 	t.lexer.begin("INITIAL")
+
+def t_prod_COMMENT(t):
+	r"'''"
+	#print("begin comment")
+	t.lexer.push_state("comment")
 
 def save_prod(t):
 	name = t.lexer.prod_name
@@ -79,15 +84,20 @@ def save_prod(t):
 		t.lexer.act_sem[name] = [""]
 	t.lexer.prod_atual = []
 
+
 t_prod_ignore = " "
 
 #--------------------PRODFUNC---------------------------
 
 def t_prodfunc_NORMAL(t):
 	r".*\n"	
-	pf = t.value.replace(";","\n\t")
-	t.lexer.act_sem[t.lexer.prod_name][-1] = pf
+	t.lexer.act_sem[t.lexer.prod_name][-1] = t.value
 	t.lexer.begin("INITIAL")
+
+def t_prodfunc_COMMENT(t):
+	r"'''"
+	#print("begin comment")
+	t.lexer.push_state("comment")
 
 t_prodfunc_ignore = " "
 
@@ -106,12 +116,17 @@ def t_func_NORMAL(t):
 	r".+(\n|$)"
 	if t.lexer.aux.group(1) in t.lexer.act_sem:
 		if t.lexer.aux.group(2) == None :
-			t.lexer.act_sem[t.lexer.aux.group(1)][-1] += t.value.replace("\t","")
+			t.lexer.act_sem[t.lexer.aux.group(1)][0] += t.value.replace("\t","")
 		else:
 			t.lexer.act_sem[t.lexer.aux.group(1)][int(t.lexer.aux.group(2))] += t.value.replace("\t","")
 	else:
 		print("Não existe o " + t.lexer.aux.group(1) + " na gramática")
 		t.lexer.error = True
+
+def t_func_COMMENT(t):
+	r"'''"
+	#print("begin comment")
+	t.lexer.push_state("comment")
 
 def t_func_END(t):
 	r"^[^\t]"
@@ -133,6 +148,11 @@ def t_code_END(t):
 	#print("begin default")
 	t.lexer.begin("INITIAL")
 
+def t_code_COMMENT(t):
+	r"'''"
+	#print("begin comment")
+	t.lexer.push_state("comment")
+
 def t_code_ERROR(t):
 	r"(\#|''')"
 	lexer.error = True
@@ -144,12 +164,14 @@ t_code_ignore = " "
 
 #precisa de ser alterado para voltar o modo que estava para permitir fazer comentarios dentro de funçoes
 
-t_comment_NORMAL = r"\S+"
+t_comment_NORMAL = r"[^']+"
 
 def t_comment_END(t):
-	r"('''|$)"
-	#print("begin default")
-	t.lexer.begin("INITIAL")
+	r"'"
+	t.lexer.end_comment += 1
+	if(t.lexer.end_comment == 3):
+		t.lexer.pop_state()
+		t.lexer.end_comment = 0
 
 t_comment_ignore = " \n\t"
 
@@ -161,21 +183,27 @@ def t_ANY_error(t):
 
 def parser_file(file):
 
-	fd = open(file,"r")
+	try:
+		fd = open(file,"r")
 
-	lexer = lex.lex()
-	lexer.prod_name = ""
-	lexer.prod_atual = []
-	lexer.prods = {}
-	lexer.term = [""]
-	lexer.axioma = ""
-	lexer.act_sem = {}
-	lexer.code = ""
-	lexer.error = False
-	for line in fd:
-		lexer.input(line)
-		for token in lexer:
-			pass
-			#print(token)
+
+		lexer = lex.lex()
+		lexer.prod_name = ""
+		lexer.prod_atual = []
+		lexer.prods = {}
+		lexer.term = [""]
+		lexer.axioma = ""
+		lexer.act_sem = {}
+		lexer.code = ""
+		lexer.end_comment = 0
+		lexer.error = False
+		for line in fd:
+			lexer.input(line)
+			for token in lexer:
+				pass
+				#print(token)
+	except:
+		print("Ficheiro não foi encontrado")
+		lexer.error = True
 
 	return (lexer.term,lexer.prods,lexer.axioma,lexer.act_sem,lexer.code,lexer.error)
