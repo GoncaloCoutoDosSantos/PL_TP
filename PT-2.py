@@ -84,7 +84,7 @@ def t_error(t):
 	for i in act_sem:
 		dic_sem += "'{}':[".format(i)
 		for j in range(len(act_sem[i])):
-			act_sem_t += declaration.format(i,j) + "\n\t"
+			act_sem_t += declaration.format(i,j) + "\n"
 			act_sem_t += (act_sem[i][j] if act_sem[i][j] != "" else default)  + "\n\n"
 			dic_sem +=  "{}_{},".format(i,j)
 		dic_sem = dic_sem[:-1] + "],"
@@ -190,7 +190,7 @@ if not(error):
 
 		if Erro:
 			if token == "":token = "Terminal"
-			print("Erro na posição:",lexer.lexpos,"no caracter",token)
+			print("Erro na posição:",lexer.lexpos,"no grupo (",token,")")
 		t = deepcopy(antigo_aux)
 
 	if mode_file:

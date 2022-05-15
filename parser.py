@@ -19,12 +19,12 @@ def t_PROD(t):
 	t.lexer.begin("prod")
 
 def t_CODE(t):
-	r"\#\#"
+	r"^\#\#"
 	#print("begin code")
 	t.lexer.begin("code")
 
 def t_FUNC(t):
-	r"\#"
+	r"^\#"
 	#print("begin func")
 	t.lexer.aux = ""
 	t.lexer.begin("funcname")
@@ -91,7 +91,7 @@ t_prod_ignore = " "
 
 def t_prodfunc_NORMAL(t):
 	r".*\n"	
-	t.lexer.act_sem[t.lexer.prod_name][-1] = t.value
+	t.lexer.act_sem[t.lexer.prod_name][-1] = "\t" + t.value
 	t.lexer.begin("INITIAL")
 
 def t_prodfunc_COMMENT(t):
@@ -103,26 +103,6 @@ t_prodfunc_ignore = " "
 
 #---------------------FUNC-------------------------------
 
-##precisa de ser melhorado para aceitar funçoes sem espaços entre elas
-def t_funcname_NORMAL(t):
-	r"(.+)(\*(\d+))?\s*:\s*\n"
-	t.lexer.aux = re.match(r"(\w+)(?:\*(\d+))?\s*:\s*\n",t.value)
-	print(t.lexer.aux.group(1))
-	t.lexer.begin("func")
-
-t_funcname_ignore = " "
-
-def t_func_NORMAL(t):
-	r".+(\n|$)"
-	print(t.value)
-	if t.lexer.aux.group(1) in t.lexer.act_sem:
-		if t.lexer.aux.group(2) == None :
-			t.lexer.act_sem[t.lexer.aux.group(1)][0] += t.value.replace("\t","")
-		else:
-			t.lexer.act_sem[t.lexer.aux.group(1)][int(t.lexer.aux.group(2))] += t.value.replace("\t","")
-	else:
-		print("Não existe o " + t.lexer.aux.group(1) + " na gramática")
-		t.lexer.error = True
 
 def t_func_COMMENT(t):
 	r"'''"
@@ -131,8 +111,39 @@ def t_func_COMMENT(t):
 
 def t_func_FUNC(t):
 	r"^\#\#"
-	#print("begin comment")
-	t.lexer.push_state("comment")
+	t.lexer.push_state("code")
+
+def t_func_FUNCNAME(t):
+	r"^\#"
+	t.lexer.push_state("funcname")
+
+
+def t_funcname_NORMAL(t):
+	r"(.+)(\*(\d+))?:\n"
+	t.lexer.aux = re.match(r"(\w+)(?:\*(\d+))?\s*:\s*\n",t.value)
+	t.lexer.begin("func")
+	if t.lexer.aux.group(1) in t.lexer.act_sem:
+		if t.lexer.aux.group(2) != None :
+			if int(t.lexer.aux.group(2)) < len(t.lexer.act_sem[t.lexer.aux.group(1)]):
+				t.lexer.act_sem[t.lexer.aux.group(1)][int(t.lexer.aux.group(2))] = ""
+		else:
+			t.lexer.act_sem[t.lexer.aux.group(1)][0] = ""
+
+t_funcname_ignore = " "
+
+def t_func_NORMAL(t):
+	r".+(\n|$)"
+	if t.lexer.aux.group(1) in t.lexer.act_sem:
+		if t.lexer.aux.group(2) == None :
+			t.lexer.act_sem[t.lexer.aux.group(1)][0] += t.value
+		else:
+			if int(t.lexer.aux.group(2)) < len(t.lexer.act_sem[t.lexer.aux.group(1)]):
+				t.lexer.act_sem[t.lexer.aux.group(1)][int(t.lexer.aux.group(2))] += t.value
+			else:
+				print("Produção não existe:{}*{}".format(t.lexer.aux.group(1),t.lexer.aux.group(2)))
+	else:
+		print("Não existe o " + t.lexer.aux.group(1) + " na gramática")
+		t.lexer.error = True
 
 def t_func_END(t):
 	r"^[^\t]"
@@ -143,35 +154,27 @@ t_func_ignore = " "
 
 #----------------------CODE------------------------------
 
-def t_code_NORMAL(t):
-	r"^[^\#][^'][^'][^'].+(\n|$)"
-	t.lexer.code += t.value
-	#print("code normal")
-
-
-def t_code_END(t):
-	r"^[^\t]"
-	#print("begin default")
-	t.lexer.begin("INITIAL")
-
-def t_code_FUNC(t):
-	r"^\#"
-	t.lexer.begin("funcname")
-
 def t_code_CODE(t):
-	r"^\#\#.*"
-	t.lexer.code += t.value[2:]
-	#print("begin default")
+	r"^\#\#"
+
+def t_code_FUNCNAME(t):
+	r"^\#"
+	t.lexer.push_state("funcname")
 
 def t_code_COMMENT(t):
 	r"'''"
 	#print("begin comment")
 	t.lexer.push_state("comment")
 
-#def t_code_ERROR(t):
-	#r"(\#|''')"
-	#lexer.error = True
-	#print("Deixe uma linha vazia entre diferentes entradas")
+def t_code_NORMAL(t):
+	r".+(\n|$)"
+	t.lexer.code += t.value
+	#print("code normal")
+
+def t_code_END(t):
+	r"^[^\t]"
+	#print("begin default")
+	t.lexer.begin("INITIAL")
 
 t_code_ignore = " "
 
