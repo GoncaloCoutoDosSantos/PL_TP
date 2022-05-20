@@ -134,6 +134,7 @@ class Grammar:
 		print("\n",self.term,end = "\n\n")
 		for i in self.prods:
 			print("Produção ",i,":")
+			print("Produçoes:",self.prods[i])
 			print("first:",self.first_p[i])
 			if i in self.follow_p:
 				print("follow:",self.follow_p[i])
