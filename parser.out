@@ -1,0 +1,578 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> z
+Rule 1     z -> total
+Rule 2     total -> entrada
+Rule 3     total -> total entrada
+Rule 4     entrada -> producao NEWLINE
+Rule 5     entrada -> acao_semantica
+Rule 6     entrada -> codigo
+Rule 7     producao -> identificador DOTS simbolos
+Rule 8     producao -> identificador DOTS simbolos EXC LINHA
+Rule 9     producao -> BAR simbolos
+Rule 10    producao -> BAR simbolos EXC LINHA
+Rule 11    simbolos -> simbolo
+Rule 12    simbolos -> simbolos simbolo
+Rule 13    simbolo -> TERMINAL
+Rule 14    simbolo -> n_terminal
+Rule 15    codigo -> CODE string
+Rule 16    acao_semantica -> CARD identificador DOTS string
+Rule 17    acao_semantica -> CARD identificador AST NUM DOTS string
+Rule 18    string -> LINHA NEWLINE string_aux
+Rule 19    string -> NEWLINE string_aux
+Rule 20    string -> LINHA NEWLINE
+Rule 21    string -> LINHA
+Rule 22    string_aux -> LINHAIDENTADA NEWLINE
+Rule 23    string_aux -> string_aux LINHAIDENTADA NEWLINE
+Rule 24    string_aux -> NEWLINE
+Rule 25    identificador -> PAL
+Rule 26    n_terminal -> PAL
+
+Terminals, with rules where they appear
+
+AST                  : 17
+BAR                  : 9 10
+CARD                 : 16 17
+CODE                 : 15
+DOTS                 : 7 8 16 17
+EXC                  : 8 10
+LINHA                : 8 10 18 20 21
+LINHAIDENTADA        : 22 23
+NEWLINE              : 4 18 19 20 22 23 24
+NUM                  : 17
+PAL                  : 25 26
+TERMINAL             : 13
+error                : 
+
+Nonterminals, with rules where they appear
+
+acao_semantica       : 5
+codigo               : 6
+entrada              : 2 3
+identificador        : 7 8 16 17
+n_terminal           : 14
+producao             : 4
+simbolo              : 11 12
+simbolos             : 7 8 9 10 12
+string               : 15 16 17
+string_aux           : 18 19 23
+total                : 1 3
+z                    : 0
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . z
+    (1) z -> . total
+    (2) total -> . entrada
+    (3) total -> . total entrada
+    (4) entrada -> . producao NEWLINE
+    (5) entrada -> . acao_semantica
+    (6) entrada -> . codigo
+    (7) producao -> . identificador DOTS simbolos
+    (8) producao -> . identificador DOTS simbolos EXC LINHA
+    (9) producao -> . BAR simbolos
+    (10) producao -> . BAR simbolos EXC LINHA
+    (16) acao_semantica -> . CARD identificador DOTS string
+    (17) acao_semantica -> . CARD identificador AST NUM DOTS string
+    (15) codigo -> . CODE string
+    (25) identificador -> . PAL
+
+    BAR             shift and go to state 8
+    CARD            shift and go to state 9
+    CODE            shift and go to state 10
+    PAL             shift and go to state 11
+
+    z                              shift and go to state 1
+    total                          shift and go to state 2
+    entrada                        shift and go to state 3
+    producao                       shift and go to state 4
+    acao_semantica                 shift and go to state 5
+    codigo                         shift and go to state 6
+    identificador                  shift and go to state 7
+
+state 1
+
+    (0) S' -> z .
+
+
+
+state 2
+
+    (1) z -> total .
+    (3) total -> total . entrada
+    (4) entrada -> . producao NEWLINE
+    (5) entrada -> . acao_semantica
+    (6) entrada -> . codigo
+    (7) producao -> . identificador DOTS simbolos
+    (8) producao -> . identificador DOTS simbolos EXC LINHA
+    (9) producao -> . BAR simbolos
+    (10) producao -> . BAR simbolos EXC LINHA
+    (16) acao_semantica -> . CARD identificador DOTS string
+    (17) acao_semantica -> . CARD identificador AST NUM DOTS string
+    (15) codigo -> . CODE string
+    (25) identificador -> . PAL
+
+    $end            reduce using rule 1 (z -> total .)
+    BAR             shift and go to state 8
+    CARD            shift and go to state 9
+    CODE            shift and go to state 10
+    PAL             shift and go to state 11
+
+    entrada                        shift and go to state 12
+    producao                       shift and go to state 4
+    acao_semantica                 shift and go to state 5
+    codigo                         shift and go to state 6
+    identificador                  shift and go to state 7
+
+state 3
+
+    (2) total -> entrada .
+
+    BAR             reduce using rule 2 (total -> entrada .)
+    CARD            reduce using rule 2 (total -> entrada .)
+    CODE            reduce using rule 2 (total -> entrada .)
+    PAL             reduce using rule 2 (total -> entrada .)
+    $end            reduce using rule 2 (total -> entrada .)
+
+
+state 4
+
+    (4) entrada -> producao . NEWLINE
+
+    NEWLINE         shift and go to state 13
+
+
+state 5
+
+    (5) entrada -> acao_semantica .
+
+    BAR             reduce using rule 5 (entrada -> acao_semantica .)
+    CARD            reduce using rule 5 (entrada -> acao_semantica .)
+    CODE            reduce using rule 5 (entrada -> acao_semantica .)
+    PAL             reduce using rule 5 (entrada -> acao_semantica .)
+    $end            reduce using rule 5 (entrada -> acao_semantica .)
+
+
+state 6
+
+    (6) entrada -> codigo .
+
+    BAR             reduce using rule 6 (entrada -> codigo .)
+    CARD            reduce using rule 6 (entrada -> codigo .)
+    CODE            reduce using rule 6 (entrada -> codigo .)
+    PAL             reduce using rule 6 (entrada -> codigo .)
+    $end            reduce using rule 6 (entrada -> codigo .)
+
+
+state 7
+
+    (7) producao -> identificador . DOTS simbolos
+    (8) producao -> identificador . DOTS simbolos EXC LINHA
+
+    DOTS            shift and go to state 14
+
+
+state 8
+
+    (9) producao -> BAR . simbolos
+    (10) producao -> BAR . simbolos EXC LINHA
+    (11) simbolos -> . simbolo
+    (12) simbolos -> . simbolos simbolo
+    (13) simbolo -> . TERMINAL
+    (14) simbolo -> . n_terminal
+    (26) n_terminal -> . PAL
+
+    TERMINAL        shift and go to state 17
+    PAL             shift and go to state 19
+
+    simbolos                       shift and go to state 15
+    simbolo                        shift and go to state 16
+    n_terminal                     shift and go to state 18
+
+state 9
+
+    (16) acao_semantica -> CARD . identificador DOTS string
+    (17) acao_semantica -> CARD . identificador AST NUM DOTS string
+    (25) identificador -> . PAL
+
+    PAL             shift and go to state 11
+
+    identificador                  shift and go to state 20
+
+state 10
+
+    (15) codigo -> CODE . string
+    (18) string -> . LINHA NEWLINE string_aux
+    (19) string -> . NEWLINE string_aux
+    (20) string -> . LINHA NEWLINE
+    (21) string -> . LINHA
+
+    LINHA           shift and go to state 22
+    NEWLINE         shift and go to state 23
+
+    string                         shift and go to state 21
+
+state 11
+
+    (25) identificador -> PAL .
+
+    DOTS            reduce using rule 25 (identificador -> PAL .)
+    AST             reduce using rule 25 (identificador -> PAL .)
+
+
+state 12
+
+    (3) total -> total entrada .
+
+    BAR             reduce using rule 3 (total -> total entrada .)
+    CARD            reduce using rule 3 (total -> total entrada .)
+    CODE            reduce using rule 3 (total -> total entrada .)
+    PAL             reduce using rule 3 (total -> total entrada .)
+    $end            reduce using rule 3 (total -> total entrada .)
+
+
+state 13
+
+    (4) entrada -> producao NEWLINE .
+
+    BAR             reduce using rule 4 (entrada -> producao NEWLINE .)
+    CARD            reduce using rule 4 (entrada -> producao NEWLINE .)
+    CODE            reduce using rule 4 (entrada -> producao NEWLINE .)
+    PAL             reduce using rule 4 (entrada -> producao NEWLINE .)
+    $end            reduce using rule 4 (entrada -> producao NEWLINE .)
+
+
+state 14
+
+    (7) producao -> identificador DOTS . simbolos
+    (8) producao -> identificador DOTS . simbolos EXC LINHA
+    (11) simbolos -> . simbolo
+    (12) simbolos -> . simbolos simbolo
+    (13) simbolo -> . TERMINAL
+    (14) simbolo -> . n_terminal
+    (26) n_terminal -> . PAL
+
+    TERMINAL        shift and go to state 17
+    PAL             shift and go to state 19
+
+    simbolos                       shift and go to state 24
+    simbolo                        shift and go to state 16
+    n_terminal                     shift and go to state 18
+
+state 15
+
+    (9) producao -> BAR simbolos .
+    (10) producao -> BAR simbolos . EXC LINHA
+    (12) simbolos -> simbolos . simbolo
+    (13) simbolo -> . TERMINAL
+    (14) simbolo -> . n_terminal
+    (26) n_terminal -> . PAL
+
+    NEWLINE         reduce using rule 9 (producao -> BAR simbolos .)
+    EXC             shift and go to state 25
+    TERMINAL        shift and go to state 17
+    PAL             shift and go to state 19
+
+    simbolo                        shift and go to state 26
+    n_terminal                     shift and go to state 18
+
+state 16
+
+    (11) simbolos -> simbolo .
+
+    EXC             reduce using rule 11 (simbolos -> simbolo .)
+    TERMINAL        reduce using rule 11 (simbolos -> simbolo .)
+    PAL             reduce using rule 11 (simbolos -> simbolo .)
+    NEWLINE         reduce using rule 11 (simbolos -> simbolo .)
+
+
+state 17
+
+    (13) simbolo -> TERMINAL .
+
+    EXC             reduce using rule 13 (simbolo -> TERMINAL .)
+    TERMINAL        reduce using rule 13 (simbolo -> TERMINAL .)
+    PAL             reduce using rule 13 (simbolo -> TERMINAL .)
+    NEWLINE         reduce using rule 13 (simbolo -> TERMINAL .)
+
+
+state 18
+
+    (14) simbolo -> n_terminal .
+
+    EXC             reduce using rule 14 (simbolo -> n_terminal .)
+    TERMINAL        reduce using rule 14 (simbolo -> n_terminal .)
+    PAL             reduce using rule 14 (simbolo -> n_terminal .)
+    NEWLINE         reduce using rule 14 (simbolo -> n_terminal .)
+
+
+state 19
+
+    (26) n_terminal -> PAL .
+
+    EXC             reduce using rule 26 (n_terminal -> PAL .)
+    TERMINAL        reduce using rule 26 (n_terminal -> PAL .)
+    PAL             reduce using rule 26 (n_terminal -> PAL .)
+    NEWLINE         reduce using rule 26 (n_terminal -> PAL .)
+
+
+state 20
+
+    (16) acao_semantica -> CARD identificador . DOTS string
+    (17) acao_semantica -> CARD identificador . AST NUM DOTS string
+
+    DOTS            shift and go to state 27
+    AST             shift and go to state 28
+
+
+state 21
+
+    (15) codigo -> CODE string .
+
+    BAR             reduce using rule 15 (codigo -> CODE string .)
+    CARD            reduce using rule 15 (codigo -> CODE string .)
+    CODE            reduce using rule 15 (codigo -> CODE string .)
+    PAL             reduce using rule 15 (codigo -> CODE string .)
+    $end            reduce using rule 15 (codigo -> CODE string .)
+
+
+state 22
+
+    (18) string -> LINHA . NEWLINE string_aux
+    (20) string -> LINHA . NEWLINE
+    (21) string -> LINHA .
+
+    NEWLINE         shift and go to state 29
+    BAR             reduce using rule 21 (string -> LINHA .)
+    CARD            reduce using rule 21 (string -> LINHA .)
+    CODE            reduce using rule 21 (string -> LINHA .)
+    PAL             reduce using rule 21 (string -> LINHA .)
+    $end            reduce using rule 21 (string -> LINHA .)
+
+
+state 23
+
+    (19) string -> NEWLINE . string_aux
+    (22) string_aux -> . LINHAIDENTADA NEWLINE
+    (23) string_aux -> . string_aux LINHAIDENTADA NEWLINE
+    (24) string_aux -> . NEWLINE
+
+    LINHAIDENTADA   shift and go to state 32
+    NEWLINE         shift and go to state 30
+
+    string_aux                     shift and go to state 31
+
+state 24
+
+    (7) producao -> identificador DOTS simbolos .
+    (8) producao -> identificador DOTS simbolos . EXC LINHA
+    (12) simbolos -> simbolos . simbolo
+    (13) simbolo -> . TERMINAL
+    (14) simbolo -> . n_terminal
+    (26) n_terminal -> . PAL
+
+    NEWLINE         reduce using rule 7 (producao -> identificador DOTS simbolos .)
+    EXC             shift and go to state 33
+    TERMINAL        shift and go to state 17
+    PAL             shift and go to state 19
+
+    simbolo                        shift and go to state 26
+    n_terminal                     shift and go to state 18
+
+state 25
+
+    (10) producao -> BAR simbolos EXC . LINHA
+
+    LINHA           shift and go to state 34
+
+
+state 26
+
+    (12) simbolos -> simbolos simbolo .
+
+    EXC             reduce using rule 12 (simbolos -> simbolos simbolo .)
+    TERMINAL        reduce using rule 12 (simbolos -> simbolos simbolo .)
+    PAL             reduce using rule 12 (simbolos -> simbolos simbolo .)
+    NEWLINE         reduce using rule 12 (simbolos -> simbolos simbolo .)
+
+
+state 27
+
+    (16) acao_semantica -> CARD identificador DOTS . string
+    (18) string -> . LINHA NEWLINE string_aux
+    (19) string -> . NEWLINE string_aux
+    (20) string -> . LINHA NEWLINE
+    (21) string -> . LINHA
+
+    LINHA           shift and go to state 22
+    NEWLINE         shift and go to state 23
+
+    string                         shift and go to state 35
+
+state 28
+
+    (17) acao_semantica -> CARD identificador AST . NUM DOTS string
+
+    NUM             shift and go to state 36
+
+
+state 29
+
+    (18) string -> LINHA NEWLINE . string_aux
+    (20) string -> LINHA NEWLINE .
+    (22) string_aux -> . LINHAIDENTADA NEWLINE
+    (23) string_aux -> . string_aux LINHAIDENTADA NEWLINE
+    (24) string_aux -> . NEWLINE
+
+    BAR             reduce using rule 20 (string -> LINHA NEWLINE .)
+    CARD            reduce using rule 20 (string -> LINHA NEWLINE .)
+    CODE            reduce using rule 20 (string -> LINHA NEWLINE .)
+    PAL             reduce using rule 20 (string -> LINHA NEWLINE .)
+    $end            reduce using rule 20 (string -> LINHA NEWLINE .)
+    LINHAIDENTADA   shift and go to state 32
+    NEWLINE         shift and go to state 30
+
+    string_aux                     shift and go to state 37
+
+state 30
+
+    (24) string_aux -> NEWLINE .
+
+    LINHAIDENTADA   reduce using rule 24 (string_aux -> NEWLINE .)
+    BAR             reduce using rule 24 (string_aux -> NEWLINE .)
+    CARD            reduce using rule 24 (string_aux -> NEWLINE .)
+    CODE            reduce using rule 24 (string_aux -> NEWLINE .)
+    PAL             reduce using rule 24 (string_aux -> NEWLINE .)
+    $end            reduce using rule 24 (string_aux -> NEWLINE .)
+
+
+state 31
+
+    (19) string -> NEWLINE string_aux .
+    (23) string_aux -> string_aux . LINHAIDENTADA NEWLINE
+
+    BAR             reduce using rule 19 (string -> NEWLINE string_aux .)
+    CARD            reduce using rule 19 (string -> NEWLINE string_aux .)
+    CODE            reduce using rule 19 (string -> NEWLINE string_aux .)
+    PAL             reduce using rule 19 (string -> NEWLINE string_aux .)
+    $end            reduce using rule 19 (string -> NEWLINE string_aux .)
+    LINHAIDENTADA   shift and go to state 38
+
+
+state 32
+
+    (22) string_aux -> LINHAIDENTADA . NEWLINE
+
+    NEWLINE         shift and go to state 39
+
+
+state 33
+
+    (8) producao -> identificador DOTS simbolos EXC . LINHA
+
+    LINHA           shift and go to state 40
+
+
+state 34
+
+    (10) producao -> BAR simbolos EXC LINHA .
+
+    NEWLINE         reduce using rule 10 (producao -> BAR simbolos EXC LINHA .)
+
+
+state 35
+
+    (16) acao_semantica -> CARD identificador DOTS string .
+
+    BAR             reduce using rule 16 (acao_semantica -> CARD identificador DOTS string .)
+    CARD            reduce using rule 16 (acao_semantica -> CARD identificador DOTS string .)
+    CODE            reduce using rule 16 (acao_semantica -> CARD identificador DOTS string .)
+    PAL             reduce using rule 16 (acao_semantica -> CARD identificador DOTS string .)
+    $end            reduce using rule 16 (acao_semantica -> CARD identificador DOTS string .)
+
+
+state 36
+
+    (17) acao_semantica -> CARD identificador AST NUM . DOTS string
+
+    DOTS            shift and go to state 41
+
+
+state 37
+
+    (18) string -> LINHA NEWLINE string_aux .
+    (23) string_aux -> string_aux . LINHAIDENTADA NEWLINE
+
+    BAR             reduce using rule 18 (string -> LINHA NEWLINE string_aux .)
+    CARD            reduce using rule 18 (string -> LINHA NEWLINE string_aux .)
+    CODE            reduce using rule 18 (string -> LINHA NEWLINE string_aux .)
+    PAL             reduce using rule 18 (string -> LINHA NEWLINE string_aux .)
+    $end            reduce using rule 18 (string -> LINHA NEWLINE string_aux .)
+    LINHAIDENTADA   shift and go to state 38
+
+
+state 38
+
+    (23) string_aux -> string_aux LINHAIDENTADA . NEWLINE
+
+    NEWLINE         shift and go to state 42
+
+
+state 39
+
+    (22) string_aux -> LINHAIDENTADA NEWLINE .
+
+    LINHAIDENTADA   reduce using rule 22 (string_aux -> LINHAIDENTADA NEWLINE .)
+    BAR             reduce using rule 22 (string_aux -> LINHAIDENTADA NEWLINE .)
+    CARD            reduce using rule 22 (string_aux -> LINHAIDENTADA NEWLINE .)
+    CODE            reduce using rule 22 (string_aux -> LINHAIDENTADA NEWLINE .)
+    PAL             reduce using rule 22 (string_aux -> LINHAIDENTADA NEWLINE .)
+    $end            reduce using rule 22 (string_aux -> LINHAIDENTADA NEWLINE .)
+
+
+state 40
+
+    (8) producao -> identificador DOTS simbolos EXC LINHA .
+
+    NEWLINE         reduce using rule 8 (producao -> identificador DOTS simbolos EXC LINHA .)
+
+
+state 41
+
+    (17) acao_semantica -> CARD identificador AST NUM DOTS . string
+    (18) string -> . LINHA NEWLINE string_aux
+    (19) string -> . NEWLINE string_aux
+    (20) string -> . LINHA NEWLINE
+    (21) string -> . LINHA
+
+    LINHA           shift and go to state 22
+    NEWLINE         shift and go to state 23
+
+    string                         shift and go to state 43
+
+state 42
+
+    (23) string_aux -> string_aux LINHAIDENTADA NEWLINE .
+
+    LINHAIDENTADA   reduce using rule 23 (string_aux -> string_aux LINHAIDENTADA NEWLINE .)
+    BAR             reduce using rule 23 (string_aux -> string_aux LINHAIDENTADA NEWLINE .)
+    CARD            reduce using rule 23 (string_aux -> string_aux LINHAIDENTADA NEWLINE .)
+    CODE            reduce using rule 23 (string_aux -> string_aux LINHAIDENTADA NEWLINE .)
+    PAL             reduce using rule 23 (string_aux -> string_aux LINHAIDENTADA NEWLINE .)
+    $end            reduce using rule 23 (string_aux -> string_aux LINHAIDENTADA NEWLINE .)
+
+
+state 43
+
+    (17) acao_semantica -> CARD identificador AST NUM DOTS string .
+
+    BAR             reduce using rule 17 (acao_semantica -> CARD identificador AST NUM DOTS string .)
+    CARD            reduce using rule 17 (acao_semantica -> CARD identificador AST NUM DOTS string .)
+    CODE            reduce using rule 17 (acao_semantica -> CARD identificador AST NUM DOTS string .)
+    PAL             reduce using rule 17 (acao_semantica -> CARD identificador AST NUM DOTS string .)
+    $end            reduce using rule 17 (acao_semantica -> CARD identificador AST NUM DOTS string .)
+

@@ -1,26 +1,29 @@
-Lista : "\[" Lista2 # print(p[1])
+Lista : "\[" Lista2 ! print(p[1])
 
-Lista2 : "\]" # return -1
-       | LCount "\]" # return t.total
+Lista2 : "\]" ! return -1
+       | LCount "\]"
 
 LCount : num LCount2 
+LCount2 : "\"|," num LCount2 ! print(p[0]);sum(p[1],t)
+	 | "" ! print("ola")
 
-LCount2 : "\"|," num LCount2 # print(p[0]);sum(p[1],t)
-	 | "" # print("ola")
+num : "\d+" ! return p[0]
 
-num : "\d+" # return p[0]
+#Lista2*1:
+	for i in range(t.total):
+		print(i)
+	return t.total
 
 # LCount:
 	t.total += int(p[0])
-
 # LCount2*1:
 	return 0
 
+'''
+Funçao que auxilia 
+'''
 ##def sum(a,t):
 	t.total += int(a)
 
 ##t_ignore = " \n"
-
-''' asdasdsadas '''
-
 ## t.total = 0

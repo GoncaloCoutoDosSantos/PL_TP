@@ -1,7 +1,7 @@
-Lista : "[" "]"
-      | "[" LCont "]"
-
-LCont : num
-      | LCont "," num
-
-num : "\d+"
+ S : Exp 
+ Exp : "\d+" 
+ Exp : "\(" Funcao "\)" 
+ Funcao : "\+" Lista 
+ Funcao : "\*" Lista 
+ Lista : Exp Lista
+Lista: "" 

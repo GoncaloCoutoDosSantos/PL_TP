@@ -30,7 +30,7 @@ try:
 	if not(error):g = Grammar(term,prods,axioma)
 except:
 	error = True
-g.print()
+#g.print()
 
 if not(error) and g.is_ll():
 
